@@ -6,3 +6,5 @@ connect4/connect4.mk
 connect4/connect4.project
 connect4/Debug/*
 *.save
+connect4/obj/Release/Game.o
+*.o
