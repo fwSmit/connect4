@@ -6,6 +6,26 @@
 using namespace std;
 
 typedef array<array <char, 7>, 6> pieces_t;
+const char empty_char = '-';
+const char player1_char = 'X';
+const char player2_char = 'O';
+
+const pieces_t testBoard {
+{-,-,-,-,-,-,-},
+{-,-,-,-,-,-,-},
+{-,-,-,-,-,-,-},
+{-,-,-,-,-,-,-},
+{'X','X','X','X',-,-,-}
+};
+
+bool hasWon(bool player, pieces_t pieces){
+    for(size_t beginPos = 0; beginPos < pieces_t.size()-4; beginPos++){
+        for(size_t currPos = 0; currPos < 4; currPos++){
+
+        }
+    }
+    return false;
+}
 
 class Board
 {
@@ -21,7 +41,7 @@ public:
     {
         for(auto& i: pieces) {
             for(auto& j : i) {
-                j = 'x';
+                j = empty_char;
             }
         }
     }
@@ -33,12 +53,29 @@ public:
         }
         std::cout << endl;
         for(size_t i = 0; i < _pieces.size(); i++) {
+            os << "{";
             for(size_t j = 0; j < _pieces[i].size(); j++) {
-                os << _pieces[i][j] << "  ";
+                os << "-" << ",";
             }
-            os << endl;
+            os << "}" << endl;
         }
         return os;
+
+        /*
+        pieces_t _pieces = b.getPieces();
+        for(size_t i = 1; i < _pieces[0].size()+1; i++) {
+            std::cout << i << "  ";
+        }
+        std::cout << endl;
+        for(size_t i = 0; i < _pieces.size(); i++) {
+            os << "{";
+            for(size_t j = 0; j < _pieces[i].size(); j++) {
+                os << _pieces[i][j] << ",";
+            }
+            os << "}" << endl;
+        }
+        return os;
+        */
     }
 
     bool isInputCorrect(unsigned int input)
@@ -47,7 +84,7 @@ public:
         if(!(input > 0 && input < (pieces[0].size() + 1))) {
             return false;
         } else {
-            return pieces[0][input-1] == 'x';
+            return pieces[0][input-1] == empty_char;
         }
     }
 
@@ -55,12 +92,12 @@ public:
     {
         // assuming input is correct
         for(int i = pieces.size()-1; i >= 0; i--) {
-            if(pieces[i][at] == 'x') {
+            if(pieces[i][at] == empty_char) {
                 cout << "found empty spot at " << i << ", " << at  << endl;
                 if(currPlayer) {
-                    pieces[i][at] = 'O';
+                    pieces[i][at] = player1_char;
                 } else {
-                    pieces[i][at] = 'W';
+                    pieces[i][at] = player2_char;
                 }
                 break;
             }
