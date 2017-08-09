@@ -4,85 +4,75 @@
 #include <array>
 #include <sstream>
 #include <string>
-
+#include "Pieces.h"
 using namespace std;
 
-typedef array<array <char, 6>, 7> pieces_t;
 const char empty_char = '-';
-const char player1_char = 'X';
-const char player2_char = 'O';
+const char playerO_char = 'O';
+const char playerX_char = 'X';
+enum Player : bool {O = false, X = true};
 
 class Game
 {
-    pieces_t pieces;
+    Pieces pieces;
+	bool currPlayer;
 public:
 
-    pieces_t getPieces()
-    {
-        return pieces;
-    }
-
     Game();
-
-    friend ostream& operator<< (ostream& os, Game& b)
-    {
-        /*pieces_t _pieces = b.getPieces();
-        for(size_t i = 1; i < _pieces[0].size()+1; i++) {
-            std::cout << i << "  ";
-        }
-        std::cout << endl;
-        for(size_t i = 0; i < _pieces.size(); i++) {
-            os << "{";
-            for(size_t j = 0; j < _pieces[i].size(); j++) {
-                os << "-" << ",";
-            }
-            os << "}" << endl;
-        }
-        return os;*/
-
-
-        pieces_t _pieces = b.getPieces();
-        for(size_t i = 1; i < _pieces.size()+1; i++) {
-            std::cout << i << "  ";
-        }
-        std::cout << endl;
-
-
-        for(size_t y = 0; y < _pieces[0].size(); y++) {
-            for(size_t x = 0; x < _pieces.size(); x++) {
-                os << _pieces[x][y] << "  ";
-            }
-            os << endl;
-        }
-        return os;
-
-    }
 
     bool isInputCorrect(unsigned int input)
     {
         //cout << "validating input " << input << endl;
-        if(!(input > 0 && input < (pieces.size() + 1))) {
+        if(!(input > 0 && input < (pieces.getXSize() + 1))) {
             return false;
         } else {
-            return pieces[input-1][0] == empty_char;
+            return pieces.getPiece(input-1, 0) == empty_char;
         }
     }
 
-    void placePiece(unsigned int at, bool currPlayer)
+    void placePiece(unsigned int at)
     {
         // assuming input is correct
-        for(int i = pieces[0].size()-1; i >= 0; i--) {
-            if(pieces[at][i] == empty_char) {
-                cout << "found empty spot at " << at << ", " << i  << endl;
-                if(currPlayer) {
-                    pieces[at][i] = player1_char;
+        for(int i = pieces.getYSize()-1; i >= 0; i--) {
+            if(pieces.getPiece(at, i) == empty_char) {
+                //cout << "found empty spot at " << at << ", " << i  << endl;
+                if(currPlayer == Player::O) {
+					pieces.setPiece(at, i, playerO_char);
                 } else {
-                    pieces[at][i] = player2_char;
+					pieces.setPiece(at, i, playerX_char);
                 }
                 break;
             }
         }
     }
+
+	void print(){
+		pieces.print();
+	}
+
+    bool hasWon(bool player);
+
+	
+	unsigned int getPlayerInput()
+	{
+		string input;
+		unsigned int result;
+		cout << "type 1-7 to place a piece at that position" << endl << endl;
+		while(1) {
+			std::getline (std::cin, input);
+			stringstream ss(input);
+			if(ss >> result && isInputCorrect(result)) {
+				break;
+			}
+			cout << "input not correct" << endl;
+		}
+		//std::cout << "placing a piece at " << result << std::endl;
+		placePiece(result-1);
+		cout << endl;
+		currPlayer =! currPlayer;
+		return result;
+
+	}
 };
 
 #endif // GAME_H
