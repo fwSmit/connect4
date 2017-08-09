@@ -20,6 +20,9 @@ public:
 
     Game();
 
+	bool getCurrentPlayer(){
+		return currPlayer;
+	}
     bool isInputCorrect(unsigned int input)
     {
         //cout << "validating input " << input << endl;
@@ -50,7 +53,7 @@ public:
 		pieces.print();
 	}
 
-    bool hasWon(bool player);
+    bool hasWon();
 
 	
 	unsigned int getPlayerInput()
@@ -69,9 +72,12 @@ public:
 		//std::cout << "placing a piece at " << result << std::endl;
 		placePiece(result-1);
 		cout << endl;
-		currPlayer =! currPlayer;
 		return result;
 
+	}
+
+	void nextPlayer(){
+		currPlayer =! currPlayer;
 	}
 };
 

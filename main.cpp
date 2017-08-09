@@ -21,18 +21,17 @@ int main()
 {
     Game board;
     bool finished = false;
-    bool currPlayer = 0;
    
     while(!finished) {
 		board.print();
         //cout << "player " << currPlayer << "'s turn" << endl;
         board.getPlayerInput();
-		if(board.hasWon(currPlayer)){
+		if(board.hasWon()){
 			board.print();
-			cout << "player" << (currPlayer? " O " : " X ") << "has won" << endl;
+			cout << "player" << (board.getCurrentPlayer() == Player::O? " O " : " X ") << "has won" << endl;
 			finished = true;
 		}
-		currPlayer = !currPlayer;
+		board.nextPlayer();
 
     }
     return 0;

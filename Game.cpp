@@ -9,9 +9,9 @@ Game::Game()
 	}
 }
 
-bool Game::hasWon(bool player)
+bool Game::hasWon()
 {
-    char currPlayerPiece = player? playerO_char : playerX_char;
+    char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
 	// horizontal win
     for(size_t yPos = 0; yPos < pieces.getYSize(); yPos ++) {
         for(size_t beginPos = 0; beginPos < pieces.getXSize() - 3; beginPos++) {
