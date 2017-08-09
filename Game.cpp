@@ -9,7 +9,7 @@ Game::Game()
 	}
 }
 
-bool Game::hasWon()
+bool Game::hasWon() const
 {
     char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
 	// horizontal win
@@ -24,7 +24,7 @@ bool Game::hasWon()
             }
             //cout << "got " << count << endl;
 			if (count == 4){
-				cout << "horizontal" << endl;
+				//cout << "horizontal" << endl;
 				return true;
 			}
         }
@@ -41,7 +41,7 @@ bool Game::hasWon()
 				}
 			}
 			if(count == 4){
-				cout << "vertical" << endl;
+				//cout << "vertical" << endl;
 				return true;
 			}
 		}
@@ -58,7 +58,7 @@ bool Game::hasWon()
 				}
 			}
 			if(count == 4){
-				cout << "backslash" << endl;
+				//cout << "backslash" << endl;
 				//cout << xPos << "	" << yPos << endl;
 				return true;
 			}
@@ -77,7 +77,7 @@ bool Game::hasWon()
 				}
 			}
 			if(count == 4){
-				cout << "/" << endl;
+				//cout << "/" << endl;
 				return true;
 			}
 		}

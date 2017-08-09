@@ -19,11 +19,18 @@ class Game
 public:
 
     Game();
+	
+	bool isFull(){
+		return pieces.isFull();
+	}
+	const Pieces getPieces() const {
+		return pieces;
+	}
 
 	bool getCurrentPlayer(){
 		return currPlayer;
 	}
-    bool isInputCorrect(unsigned int input)
+    bool isInputCorrect(unsigned int input) const
     {
         //cout << "validating input " << input << endl;
         if(!(input > 0 && input < (pieces.getXSize() + 1))) {
@@ -53,7 +60,7 @@ public:
 		pieces.print();
 	}
 
-    bool hasWon();
+    bool hasWon() const;
 
 	
 	unsigned int getPlayerInput()

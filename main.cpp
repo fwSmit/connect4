@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include "Game.h"
+#include "Bot.h"
 
 using namespace std;
 
@@ -20,10 +21,12 @@ using namespace std;
 int main()
 {
     Game board;
+	Bot bot;
     bool finished = false;
    
     while(!finished) {
 		board.print();
+		bot.getBestMove(board); 
         //cout << "player " << currPlayer << "'s turn" << endl;
         board.getPlayerInput();
 		if(board.hasWon()){
