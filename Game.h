@@ -20,6 +20,13 @@ public:
 
     Game();
 	
+	char getPlayerChar(){
+		if(currPlayer == Player::X){
+			return 'X';
+		}else{
+			return 'O';
+		}
+	}
 	bool isFull(){
 		return pieces.isFull();
 	}
@@ -27,7 +34,7 @@ public:
 		return pieces;
 	}
 
-	bool getCurrentPlayer(){
+	bool getCurrentPlayer() const {
 		return currPlayer;
 	}
     bool isInputCorrect(unsigned int input) const
@@ -84,8 +91,11 @@ public:
 	}
 
 	void nextPlayer(){
+		//cout << "next Player" << endl;
 		currPlayer =! currPlayer;
 	}
+	
+	int getNumberWinningMoves() const;
 };
 
 #endif // GAME_H
