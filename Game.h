@@ -4,22 +4,26 @@
 #include <array>
 #include <sstream>
 #include <string>
+#include <functional>
+#include "BotParameters.h"
 #include "Pieces.h"
+
 using namespace std;
 
 const char empty_char = '-';
 const char playerO_char = 'O';
 const char playerX_char = 'X';
-enum Player : bool {O = false, X = true};
+enum Player : bool {O = false, X = true, Beginning = false};
 
 class Game
 {
     Pieces pieces;
-	bool currPlayer;
+	bool currPlayer = Player::Beginning;
 public:
 
     Game();
 	
+	void start(std::function<int(Game)> player1, std::function<int(Game)> player2);
 	char getPlayerChar(){
 		if(currPlayer == Player::X){
 			return 'X';
@@ -70,7 +74,7 @@ public:
     bool hasWon() const;
 
 	
-	unsigned int getPlayerInput()
+	unsigned int getPlayerInput() const
 	{
 		string input;
 		unsigned int result;
@@ -84,18 +88,17 @@ public:
 			cout << "input not correct" << endl;
 		}
 		//std::cout << "placing a piece at " << result << std::endl;
-		placePiece(result-1);
 		cout << endl;
-		return result;
+		return result - 1;
 
 	}
 
 	void nextPlayer(){
-		//cout << "next Player" << endl;
+		//cout << "next Player in function" << endl;
 		currPlayer =! currPlayer;
 	}
 	
-	int getNumberWinningMoves() const;
+	int getNumberWinningMoves(BotParameters params) const;
 };
 
 #endif // GAME_H

@@ -5,14 +5,14 @@
 
 using namespace std;
 
-int Bot::getBestMove(const Game& _board){
+int Bot::getBestMove(const Game& _board, BotParameters params){
 	int bestScore = std::numeric_limits<int>::min();
 	vector<int> bestMoves;
 	Game board = _board;
 	//board.nextPlayer();
 	for(int i = 0; i < board.getPieces().getXSize(); i++){
 		if(board.isInputCorrect(i+1)){
-			int currScore = getScore(board, board.getCurrentPlayer(), i, 5);
+			int currScore = getScore(board, board.getCurrentPlayer(), i, 5, params);
 			cout << currScore << " ";
 			// bestScore = max(currScore, bestScore)
 			if(currScore > bestScore){
@@ -38,8 +38,8 @@ int Bot::getBestMove(const Game& _board){
 }
 
 // bug: if there are no moves left getScore will return -2
-int Bot::getScore(const Game& _board, const bool currentPlayer, int move, int depth){
-	if(depth == 0) return getNumberWinningMoves(_board);
+int Bot::getScore(const Game& _board, const bool currentPlayer, int move, int depth, BotParameters params){
+	if(depth == 0) return getNumberWinningMoves(_board, params);
 	//cout << "move " << move << endl;
 	Game board = _board;
 	//board.nextPlayer();
@@ -50,7 +50,7 @@ int Bot::getScore(const Game& _board, const bool currentPlayer, int move, int de
 	board.placePiece(move);
 	if (board.hasWon()){
 		//cout << "someone won" << endl;
-		return 10 * depth;
+		return 10000 * depth;
 	}
 	if(board.isFull()){
 		//cout << "board full" << endl;
@@ -58,12 +58,12 @@ int Bot::getScore(const Game& _board, const bool currentPlayer, int move, int de
 	}
 	const Pieces boardPieces = board.getPieces();
 	//int bestScore = opponent_turn ? -10 : 10;
-	int bestScore = -10;
+	int bestScore = std::numeric_limits<int>::min();
 	for(int i = 0; i < boardPieces.getXSize(); i++){
 		Game newBoard = board;
 		newBoard.nextPlayer();
 		if(board.isInputCorrect(i+1)){
-			int score = getScore(newBoard, currentPlayer, i, depth-1);
+			int score = getScore(newBoard, currentPlayer, i, depth-1, params);
 			//if(opponent_turn){
 				//bestScore = std::max(score, bestScore);
 			//}else{
@@ -80,9 +80,9 @@ void test(){
 	
 }
 
-int Bot::getNumberWinningMoves(Game board){
-	int yourNumber= board.getNumberWinningMoves();
+int Bot::getNumberWinningMoves(Game board, BotParameters params){
+	int yourNumber= board.getNumberWinningMoves(params);
 	board.nextPlayer();
-	int enemyNumber = board.getNumberWinningMoves();
+	int enemyNumber = board.getNumberWinningMoves(params);
 	return yourNumber - enemyNumber;
 }

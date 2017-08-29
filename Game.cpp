@@ -89,8 +89,10 @@ bool Game::hasWon() const
     return false;
 }
 
-int Game::getNumberWinningMoves() const {
-	int totalCount = 0;
+int Game::getNumberWinningMoves(BotParameters params) const {
+	unsigned int twoPiecesCount = 0;
+	unsigned int threePiecesCount = 0;
+
     char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
 	// horizontal win
     for(size_t yPos = 0; yPos < pieces.getYSize(); yPos ++) {
@@ -107,9 +109,12 @@ int Game::getNumberWinningMoves() const {
                 }
             }
             //cout << "got " << count << endl;
-			if (pieces_count == 3 && count == 3){
+			if(pieces_count == 3 && count == 3){
+				threePiecesCount++;
+			}
+			if (pieces_count == 2 && count == 2){
 				//cout << "horizontal" << endl;
-				totalCount++;
+				twoPiecesCount++;
 			}
         }
     }
@@ -128,9 +133,12 @@ int Game::getNumberWinningMoves() const {
 					pieces_count++;
 				}
 			}
-			if (pieces_count == 3 && count == 3){
+			if(pieces_count == 3 && count == 3){
+				threePiecesCount++;
+			}
+			if (pieces_count == 2 && count == 2){
 				//cout << "horizontal" << endl;
-				totalCount++;
+				twoPiecesCount++;
 			}
 		}
 	}
@@ -149,9 +157,12 @@ int Game::getNumberWinningMoves() const {
 					pieces_count++;
 				}
 			}
-			if (pieces_count == 3 && count == 3){
+			if(pieces_count == 3 && count == 3){
+				threePiecesCount++;
+			}
+			if (pieces_count == 2 && count == 2){
 				//cout << "horizontal" << endl;
-				totalCount++;
+				twoPiecesCount++;
 			}
 		}
 		//cout << "reset count " << endl;
@@ -171,12 +182,55 @@ int Game::getNumberWinningMoves() const {
 					pieces_count++;
 				}
 			}
-			if (pieces_count == 3 && count == 3){
+			if(pieces_count == 3 && count == 3){
+				threePiecesCount++;
+			}
+			if (pieces_count == 2 && count == 2){
 				//cout << "horizontal" << endl;
-				totalCount++;
+				twoPiecesCount++;
 			}
 		}
 	}
 
-    return totalCount;
+	//cout << "threePiecesCount " << threePiecesCount << endl << "twoPiecesCount " << twoPiecesCount << endl;
+	int result = 	threePiecesCount * params.ThreeInARow
+					+ twoPiecesCount * params.TwoInARow;
+	/*switch (params){*/
+		//case 1:
+			//result = threePiecesCount;
+			//break;
+		//case 2:
+			//result = twoPiecesCount + 5 * threePiecesCount;
+			//break;
+
+		//case 3:
+			//result = twoPiecesCount;
+			//break;
+		//default:
+			//result = 0;
+	/*}*/
+    return result;
+}
+
+
+void Game::start(std::function<int(Game)> player1, std::function<int(Game)> player2){
+	bool finished = false;
+	while(!finished) {
+		if(getCurrentPlayer() == Player::Beginning){
+			//cout << "Beginning player" << endl;
+			placePiece(player1(*this));
+		}else{
+			//cout << "not Beginning player" << endl;
+			placePiece(player2(*this));
+		}
+		print();
+		if(hasWon()){
+			print();
+			cout << "player" << (getCurrentPlayer() == Player::O? " O " : " X ") << "has won" << endl;
+			finished = true;
+		}
+		//cout << "number of 2 pieces in a row " << getNumberWinningMoves() << endl;
+		//cout << "next player" << endl;
+		nextPlayer();
+	}
 }
