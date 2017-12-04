@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <time.h>
 #include "Game.h"
 #include "Bot.h"
 
