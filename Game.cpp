@@ -7,9 +7,14 @@ Game::Game()
 			pieces.setPiece(i, j, empty_char);
 		}
 	}
-	for(int i = 0; i < 3; i++){
+
+	//for(int i = 0; i < 3; i++){
 		//pieces.setPiece(i, 5, playerX_char);
-	}
+	//}
+
+	//for(int i = 0; i < 3; i++){
+		//pieces.setPiece(i, 3, playerX_char);
+	//}
 }
 
 bool Game::hasWon() const
@@ -232,5 +237,18 @@ void Game::start(std::function<int(Game)> player1, std::function<int(Game)> play
 		//cout << "number of 2 pieces in a row " << getNumberWinningMoves() << endl;
 		//cout << "next player" << endl;
 		nextPlayer();
+	}
+}
+
+void Game::drawBoard(sf::RenderWindow& window){
+	for(size_t y = 0; y < pieces.getYSize(); y++) {
+		for(size_t x = 0; x < pieces.getXSize(); x++) {
+			if(pieces.getPiece(x,y) != empty_char){
+				sf::CircleShape circle(50);
+				circle.setPosition(x*100, y*100);
+				window.draw(circle);
+				//cout << "drawing" << endl;
+			}
+		}
 	}
 }

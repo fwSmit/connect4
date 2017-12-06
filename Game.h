@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <functional>
+#include <SFML/Graphics.hpp>
 #include "BotParameters.h"
 #include "Pieces.h"
 
@@ -24,6 +25,7 @@ public:
     Game();
 	
 	void start(std::function<int(Game)> player1, std::function<int(Game)> player2);
+	void drawBoard(sf::RenderWindow& window);
 	char getPlayerChar(){
 		if(currPlayer == Player::X){
 			return 'X';
