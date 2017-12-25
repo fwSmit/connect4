@@ -241,14 +241,40 @@ void Game::start(std::function<int(Game)> player1, std::function<int(Game)> play
 }
 
 void Game::drawBoard(sf::RenderWindow& window){
+	int circleSize = 130;
+	int spacing = 10;
+	sf::RectangleShape background(sf::Vector2f(window.getSize()));
+	background.setFillColor(sf::Color::Green);
+	window.draw(background);
 	for(size_t y = 0; y < pieces.getYSize(); y++) {
 		for(size_t x = 0; x < pieces.getXSize(); x++) {
-			if(pieces.getPiece(x,y) != empty_char){
-				sf::CircleShape circle(50);
-				circle.setPosition(x*100, y*100);
-				window.draw(circle);
-				//cout << "drawing" << endl;
+			sf::CircleShape circle(circleSize/2);
+			switch (pieces.getPiece(x,y)){
+				case empty_char:
+					circle.setFillColor(sf::Color::Black);
+					break;
+				case playerO_char:
+					circle.setFillColor(sf::Color::Yellow);
+					break;
+				case playerX_char:
+					circle.setFillColor(sf::Color::Blue);
+					break;
+				default:
+					break;
 			}
+			circle.setPosition(x*(circleSize+spacing)+spacing, y*(spacing+ circleSize)+spacing);
+		   	window.draw(circle); 
+		} 
+	} 
+}
+
+void Game::handleEvent(sf::Event event, sf::RenderWindow& window){
+	int circleSize = 130;
+	int spacing = 10;
+	if(event.type == sf::Event::MouseButtonPressed){
+		if(event.mouseButton.button == sf::Mouse::Left){	
+			double place = std::floor(double(sf::Mouse::getPosition(window).x - spacing) / double(circleSize + spacing));
+			std::cout << sf::Mouse::getPosition(window).x << "	" << place << endl;
 		}
 	}
 }

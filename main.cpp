@@ -30,7 +30,9 @@ int main()
 	Game game;
 	
 
-	sf::RenderWindow window(sf::VideoMode(1000, 800), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(7*140 + 10, 6*140 + 10), "SFML works!");
+	sf::CircleShape circle(100.f);
+	
 
     while (window.isOpen())
     {
@@ -39,9 +41,12 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+			game.handleEvent(event, window);
         }
         window.clear();
 		game.drawBoard(window);
+		//window.draw(circle);
 
         window.display();
     }

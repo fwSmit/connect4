@@ -26,6 +26,7 @@ public:
 	
 	void start(std::function<int(Game)> player1, std::function<int(Game)> player2);
 	void drawBoard(sf::RenderWindow& window);
+	void handleEvent(sf::Event event, sf::RenderWindow& window);
 	char getPlayerChar(){
 		if(currPlayer == Player::X){
 			return 'X';
