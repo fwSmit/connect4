@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <cmath>
 
 Game::Game()
 {
@@ -275,6 +276,8 @@ void Game::handleEvent(sf::Event event, sf::RenderWindow& window){
 		if(event.mouseButton.button == sf::Mouse::Left){	
 			double place = std::floor(double(sf::Mouse::getPosition(window).x - spacing) / double(circleSize + spacing));
 			std::cout << sf::Mouse::getPosition(window).x << "	" << place << endl;
+			placePiece(place);
+			nextPlayer()
 		}
 	}
 }
