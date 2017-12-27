@@ -277,7 +277,7 @@ void Game::handleEvent(sf::Event event, sf::RenderWindow& window){
 			double place = std::floor(double(sf::Mouse::getPosition(window).x - spacing) / double(circleSize + spacing));
 			std::cout << sf::Mouse::getPosition(window).x << "	" << place << endl;
 			placePiece(place);
-			nextPlayer()
+			nextPlayer();
 		}
 	}
 }
