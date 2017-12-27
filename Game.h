@@ -18,12 +18,15 @@ enum Player : bool {O = false, X = true, Beginning = false};
 
 class Game
 {
-    Pieces pieces;
+	Pieces pieces;
 	bool currPlayer = Player::Beginning;
+	sf::Font font;
+	enum GameState { menu, inGame, ended};
+	GameState gameState = GameState::menu;
 public:
 
-    Game();
-	
+	Game();
+	void loop(sf::RenderWindow& window);
 	void start(std::function<int(Game)> player1, std::function<int(Game)> player2);
 	void drawBoard(sf::RenderWindow& window);
 	void handleEvent(sf::Event event, sf::RenderWindow& window);
@@ -76,7 +79,6 @@ public:
 
     bool hasWon() const;
 
-	
 	unsigned int getPlayerInput() const
 	{
 		string input;
@@ -100,7 +102,6 @@ public:
 		//cout << "next Player in function" << endl;
 		currPlayer =! currPlayer;
 	}
-	
 	int getNumberWinningMoves(BotParameters params) const;
 };
 

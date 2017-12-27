@@ -45,7 +45,8 @@ int main()
 			game.handleEvent(event, window);
         }
         window.clear();
-		game.drawBoard(window);
+		game.loop(window);
+		//game.drawBoard(window);
 		//window.draw(circle);
 
         window.display();

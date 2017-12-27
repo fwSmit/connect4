@@ -9,35 +9,37 @@ Game::Game()
 		}
 	}
 
+	font.loadFromFile("../fonts/Ubuntu-M.ttf");
+
 	//for(int i = 0; i < 3; i++){
-		//pieces.setPiece(i, 5, playerX_char);
+	//pieces.setPiece(i, 5, playerX_char);
 	//}
 
 	//for(int i = 0; i < 3; i++){
-		//pieces.setPiece(i, 3, playerX_char);
+	//pieces.setPiece(i, 3, playerX_char);
 	//}
 }
 
 bool Game::hasWon() const
 {
-    char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
+	char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
 	// horizontal win
-    for(size_t yPos = 0; yPos < pieces.getYSize(); yPos ++) {
-        for(size_t beginPos = 0; beginPos < pieces.getXSize() - 3; beginPos++) {
-            unsigned int count = 0;
-            for(size_t currPos = beginPos; currPos < beginPos +  4; currPos++) {
-                if(pieces.getPiece(currPos, yPos) == currPlayerPiece) {
-                    count++;
+	for(size_t yPos = 0; yPos < pieces.getYSize(); yPos ++) {
+		for(size_t beginPos = 0; beginPos < pieces.getXSize() - 3; beginPos++) {
+			unsigned int count = 0;
+			for(size_t currPos = beginPos; currPos < beginPos +  4; currPos++) {
+				if(pieces.getPiece(currPos, yPos) == currPlayerPiece) {
+					count++;
 					//cout << "found horizontal piece at " << currPos << "	" << yPos << endl;
-                }
-            }
-            //cout << "got " << count << endl;
+				}
+			}
+			//cout << "got " << count << endl;
 			if (count == 4){
 				//cout << "horizontal" << endl;
 				return true;
 			}
-        }
-    }
+		}
+	}
 
 	//vertical win
 	for(size_t xPos = 0; xPos < pieces.getXSize(); xPos++){
@@ -92,29 +94,29 @@ bool Game::hasWon() const
 		}
 	}
 
-    return false;
+	return false;
 }
 
 int Game::getNumberWinningMoves(BotParameters params) const {
 	unsigned int twoPiecesCount = 0;
 	unsigned int threePiecesCount = 0;
 
-    char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
+	char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
 	// horizontal win
-    for(size_t yPos = 0; yPos < pieces.getYSize(); yPos ++) {
-        for(size_t beginPos = 0; beginPos < pieces.getXSize() - 3; beginPos++) {
-            unsigned int count = 0;
+	for(size_t yPos = 0; yPos < pieces.getYSize(); yPos ++) {
+		for(size_t beginPos = 0; beginPos < pieces.getXSize() - 3; beginPos++) {
+			unsigned int count = 0;
 			unsigned int pieces_count = 0;
-            for(size_t currPos = beginPos; currPos < beginPos +  4; currPos++) {
+			for(size_t currPos = beginPos; currPos < beginPos +  4; currPos++) {
 				if(pieces.getPiece(currPos, yPos) != empty_char){
 					pieces_count++;
 				}
-                if(pieces.getPiece(currPos, yPos) == currPlayerPiece) {
-                    count++;
+				if(pieces.getPiece(currPos, yPos) == currPlayerPiece) {
+					count++;
 					//cout << "found horizontal piece at " << currPos << "	" << yPos << endl;
-                }
-            }
-            //cout << "got " << count << endl;
+				}
+			}
+			//cout << "got " << count << endl;
 			if(pieces_count == 3 && count == 3){
 				threePiecesCount++;
 			}
@@ -122,8 +124,8 @@ int Game::getNumberWinningMoves(BotParameters params) const {
 				//cout << "horizontal" << endl;
 				twoPiecesCount++;
 			}
-        }
-    }
+		}
+	}
 
 	//vertical win
 	for(size_t xPos = 0; xPos < pieces.getXSize(); xPos++){
@@ -200,22 +202,22 @@ int Game::getNumberWinningMoves(BotParameters params) const {
 
 	//cout << "threePiecesCount " << threePiecesCount << endl << "twoPiecesCount " << twoPiecesCount << endl;
 	int result = 	threePiecesCount * params.ThreeInARow
-					+ twoPiecesCount * params.TwoInARow;
+		+ twoPiecesCount * params.TwoInARow;
 	/*switch (params){*/
-		//case 1:
-			//result = threePiecesCount;
-			//break;
-		//case 2:
-			//result = twoPiecesCount + 5 * threePiecesCount;
-			//break;
+	//case 1:
+	//result = threePiecesCount;
+	//break;
+	//case 2:
+	//result = twoPiecesCount + 5 * threePiecesCount;
+	//break;
 
-		//case 3:
-			//result = twoPiecesCount;
-			//break;
-		//default:
-			//result = 0;
+	//case 3:
+	//result = twoPiecesCount;
+	//break;
+	//default:
+	//result = 0;
 	/*}*/
-    return result;
+	return result;
 }
 
 
@@ -264,7 +266,7 @@ void Game::drawBoard(sf::RenderWindow& window){
 					break;
 			}
 			circle.setPosition(x*(circleSize+spacing)+spacing, y*(spacing+ circleSize)+spacing);
-		   	window.draw(circle); 
+			window.draw(circle); 
 		} 
 	} 
 }
@@ -274,10 +276,44 @@ void Game::handleEvent(sf::Event event, sf::RenderWindow& window){
 	int spacing = 10;
 	if(event.type == sf::Event::MouseButtonPressed){
 		if(event.mouseButton.button == sf::Mouse::Left){	
-			double place = std::floor(double(sf::Mouse::getPosition(window).x - spacing) / double(circleSize + spacing));
-			std::cout << sf::Mouse::getPosition(window).x << "	" << place << endl;
-			placePiece(place);
-			nextPlayer();
+			switch(gameState){
+				case GameState::menu:{
+					gameState = GameState::inGame;
+					}break;
+				case GameState::inGame:{
+					   double place = std::floor(double(sf::Mouse::getPosition(window).x - spacing) / double(circleSize + spacing));
+					   std::cout << sf::Mouse::getPosition(window).x << "	" << place << endl;
+					   placePiece(place);
+					   if(hasWon()){
+						   gameState = GameState::ended;
+					   }
+					   else{
+						   nextPlayer();
+					   }
+					   }break;
+				case GameState::ended:
+						gameState = GameState::inGame;
+						break;
+				default:
+					   break;
+			}
 		}
 	}
 }
+
+void Game::loop(sf::RenderWindow& window){
+	switch(gameState){
+		case GameState::menu:{
+			 sf::Text text("Start", font, 100);  
+			 window.draw(text);
+			 }break;
+		case GameState::inGame:
+			 drawBoard(window);
+			 break;
+		case GameState::ended:
+			 //drawBoard(window);
+			 break;
+		default:
+			 break;
+	}
+}	
