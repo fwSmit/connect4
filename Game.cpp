@@ -1,6 +1,9 @@
 #include <assert.h>
 #include "Game.h"
 #include <cmath>
+#include <iostream>
+
+using namespace std;
 
 Game::Game(sf::RenderWindow& _window, tgui::Gui& gui) : window(_window)
 {
@@ -16,27 +19,20 @@ Game::Game(sf::RenderWindow& _window, tgui::Gui& gui) : window(_window)
 	button2->setPosition(100, 500);
 	gui.add(button2, "button2");
 
-
 	font.loadFromFile("../fonts/Ubuntu-M.ttf");
 
-	//for(int i = 0; i < 3; i++){
-	//pieces.setPiece(i, 5, playerX_char);
-	//}
-
-	//for(int i = 0; i < 3; i++){
-	//pieces.setPiece(i, 3, playerX_char);
-	//}
+	clear();
 }
 
 bool Game::hasWon() const
 {
 	char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
 	// horizontal win
-	for(size_t yPos = 0; yPos < pieces.getYSize(); yPos ++) {
-		for(size_t beginPos = 0; beginPos < pieces.getXSize() - 3; beginPos++) {
+	for(size_t yPos = 0; yPos < getYSize(); yPos ++) {
+		for(size_t beginPos = 0; beginPos < getXSize() - 3; beginPos++) {
 			unsigned int count = 0;
 			for(size_t currPos = beginPos; currPos < beginPos +  4; currPos++) {
-				if(pieces.getPiece(currPos, yPos) == currPlayerPiece) {
+				if(getPiece(currPos, yPos) == currPlayerPiece) {
 					count++;
 					//cout << "found horizontal piece at " << currPos << "	" << yPos << endl;
 				}
@@ -50,11 +46,11 @@ bool Game::hasWon() const
 	}
 
 	//vertical win
-	for(size_t xPos = 0; xPos < pieces.getXSize(); xPos++){
-		for(size_t yBegin = 0; yBegin < pieces.getYSize()-3; yBegin++){
+	for(size_t xPos = 0; xPos < getXSize(); xPos++){
+		for(size_t yBegin = 0; yBegin < getYSize()-3; yBegin++){
 			unsigned int count = 0;
 			for(size_t curr = 0; curr < 4; curr++){
-				if(pieces.getPiece(xPos, yBegin+curr) == currPlayerPiece){
+				if(getPiece(xPos, yBegin+curr) == currPlayerPiece){
 					count++;
 					//cout << "found vertical piece at " << xPos << "	" << yBegin+curr << endl;
 				}
@@ -67,11 +63,11 @@ bool Game::hasWon() const
 	}
 
 	// across like \ (backslash) 
-	for(size_t xPos = 0; xPos < pieces.getXSize()-3; xPos++){
-		for(size_t yPos = 0; yPos < pieces.getYSize()-3; yPos++){
+	for(size_t xPos = 0; xPos < getXSize()-3; xPos++){
+		for(size_t yPos = 0; yPos < getYSize()-3; yPos++){
 			unsigned int count = 0;
 			for(size_t curr = 0; curr < 4; curr++){
-				if(pieces.getPiece(xPos+curr, yPos+curr) == currPlayerPiece){
+				if(getPiece(xPos+curr, yPos+curr) == currPlayerPiece){
 					count++;
 					//cout << "found piece at " << xPos+3-curr << "	" << yPos+curr << endl;
 				}
@@ -87,11 +83,11 @@ bool Game::hasWon() const
 
 
 	// across like / (forward slash) 
-	for(size_t xPos = 0; xPos < pieces.getXSize()-3; xPos++){
-		for(size_t yPos = 0; yPos < pieces.getYSize()-3; yPos++){
+	for(size_t xPos = 0; xPos < getXSize()-3; xPos++){
+		for(size_t yPos = 0; yPos < getYSize()-3; yPos++){
 			unsigned int count = 0;
 			for(size_t curr = 0; curr < 4; curr++){
-				if(pieces.getPiece(xPos+curr, yPos+3-curr) == currPlayerPiece){
+				if(getPiece(xPos+curr, yPos+3-curr) == currPlayerPiece){
 					count++;
 				}
 			}
@@ -101,132 +97,131 @@ bool Game::hasWon() const
 			}
 		}
 	}
-
 	return false;
 }
 
-int Game::getNumberWinningMoves(BotParameters params) const {
-	unsigned int twoPiecesCount = 0;
-	unsigned int threePiecesCount = 0;
+//int Game::getNumberWinningMoves(BotParameters params) const {
+	//unsigned int twoPiecesCount = 0;
+	//unsigned int threePiecesCount = 0;
 
-	char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
-	// horizontal win
-	for(size_t yPos = 0; yPos < pieces.getYSize(); yPos ++) {
-		for(size_t beginPos = 0; beginPos < pieces.getXSize() - 3; beginPos++) {
-			unsigned int count = 0;
-			unsigned int pieces_count = 0;
-			for(size_t currPos = beginPos; currPos < beginPos +  4; currPos++) {
-				if(pieces.getPiece(currPos, yPos) != empty_char){
-					pieces_count++;
-				}
-				if(pieces.getPiece(currPos, yPos) == currPlayerPiece) {
-					count++;
-					//cout << "found horizontal piece at " << currPos << "	" << yPos << endl;
-				}
-			}
-			//cout << "got " << count << endl;
-			if(pieces_count == 3 && count == 3){
-				threePiecesCount++;
-			}
-			if (pieces_count == 2 && count == 2){
-				//cout << "horizontal" << endl;
-				twoPiecesCount++;
-			}
-		}
-	}
+	//char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
+	//// horizontal win
+	//for(size_t yPos = 0; yPos < getYSize(); yPos ++) {
+		//for(size_t beginPos = 0; beginPos < getXSize() - 3; beginPos++) {
+			//unsigned int count = 0;
+			//unsigned int pieces_count = 0;
+			//for(size_t currPos = beginPos; currPos < beginPos +  4; currPos++) {
+				//if(getPiece(currPos, yPos) != empty_char){
+					//pieces_count++;
+				//}
+				//if(getPiece(currPos, yPos) == currPlayerPiece) {
+					//count++;
+					////cout << "found horizontal piece at " << currPos << "	" << yPos << endl;
+				//}
+			//}
+			////cout << "got " << count << endl;
+			//if(pieces_count == 3 && count == 3){
+				//threePiecesCount++;
+			//}
+			//if (pieces_count == 2 && count == 2){
+				////cout << "horizontal" << endl;
+				//twoPiecesCount++;
+			//}
+		//}
+	//}
 
-	//vertical win
-	for(size_t xPos = 0; xPos < pieces.getXSize(); xPos++){
-		for(size_t yBegin = 0; yBegin < pieces.getYSize()-3; yBegin++){
-			unsigned int count = 0;
-			unsigned int pieces_count = 0;
-			for(size_t curr = 0; curr < 4; curr++){
-				if(pieces.getPiece(xPos, yBegin+curr) == currPlayerPiece){
-					count++;
-					//cout << "found vertical piece at " << xPos << "	" << yBegin+curr << endl;
-				}
-				if(pieces.getPiece(xPos, yBegin+curr) != empty_char){
-					pieces_count++;
-				}
-			}
-			if(pieces_count == 3 && count == 3){
-				threePiecesCount++;
-			}
-			if (pieces_count == 2 && count == 2){
-				//cout << "horizontal" << endl;
-				twoPiecesCount++;
-			}
-		}
-	}
+	////vertical win
+	//for(size_t xPos = 0; xPos < getXSize(); xPos++){
+		//for(size_t yBegin = 0; yBegin < getYSize()-3; yBegin++){
+			//unsigned int count = 0;
+			//unsigned int pieces_count = 0;
+			//for(size_t curr = 0; curr < 4; curr++){
+				//if(getPiece(xPos, yBegin+curr) == currPlayerPiece){
+					//count++;
+					////cout << "found vertical piece at " << xPos << "	" << yBegin+curr << endl;
+				//}
+				//if(getPiece(xPos, yBegin+curr) != empty_char){
+					//pieces_count++;
+				//}
+			//}
+			//if(pieces_count == 3 && count == 3){
+				//threePiecesCount++;
+			//}
+			//if (pieces_count == 2 && count == 2){
+				////cout << "horizontal" << endl;
+				//twoPiecesCount++;
+			//}
+		//}
+	//}
 
-	// across like \ (backslash) 
-	for(size_t xPos = 0; xPos < pieces.getXSize()-3; xPos++){
-		for(size_t yPos = 0; yPos < pieces.getYSize()-3; yPos++){
-			unsigned int count = 0;
-			unsigned int pieces_count = 0;
-			for(size_t curr = 0; curr < 4; curr++){
-				if(pieces.getPiece(xPos+curr, yPos+curr) == currPlayerPiece){
-					count++;
-					//cout << "found piece at " << xPos+3-curr << "	" << yPos+curr << endl;
-				}
-				if(pieces.getPiece(xPos+curr, yPos+curr) != empty_char){
-					pieces_count++;
-				}
-			}
-			if(pieces_count == 3 && count == 3){
-				threePiecesCount++;
-			}
-			if (pieces_count == 2 && count == 2){
-				//cout << "horizontal" << endl;
-				twoPiecesCount++;
-			}
-		}
-		//cout << "reset count " << endl;
-	}
+	//// across like \ (backslash) 
+	//for(size_t xPos = 0; xPos < getXSize()-3; xPos++){
+		//for(size_t yPos = 0; yPos < getYSize()-3; yPos++){
+			//unsigned int count = 0;
+			//unsigned int pieces_count = 0;
+			//for(size_t curr = 0; curr < 4; curr++){
+				//if(getPiece(xPos+curr, yPos+curr) == currPlayerPiece){
+					//count++;
+					////cout << "found piece at " << xPos+3-curr << "	" << yPos+curr << endl;
+				//}
+				//if(getPiece(xPos+curr, yPos+curr) != empty_char){
+					//pieces_count++;
+				//}
+			//}
+			//if(pieces_count == 3 && count == 3){
+				//threePiecesCount++;
+			//}
+			//if (pieces_count == 2 && count == 2){
+				////cout << "horizontal" << endl;
+				//twoPiecesCount++;
+			//}
+		//}
+		////cout << "reset count " << endl;
+	//}
 
 
-	// across like / (forward slash) 
-	for(size_t xPos = 0; xPos < pieces.getXSize()-3; xPos++){
-		for(size_t yPos = 0; yPos < pieces.getYSize()-3; yPos++){
-			unsigned int count = 0;
-			unsigned int pieces_count = 0;
-			for(size_t curr = 0; curr < 4; curr++){
-				if(pieces.getPiece(xPos+curr, yPos+3-curr) == currPlayerPiece){
-					count++;
-				}
-				if(pieces.getPiece(xPos+curr, yPos+curr) != empty_char){
-					pieces_count++;
-				}
-			}
-			if(pieces_count == 3 && count == 3){
-				threePiecesCount++;
-			}
-			if (pieces_count == 2 && count == 2){
-				//cout << "horizontal" << endl;
-				twoPiecesCount++;
-			}
-		}
-	}
+	//// across like / (forward slash) 
+	//for(size_t xPos = 0; xPos < getXSize()-3; xPos++){
+		//for(size_t yPos = 0; yPos < getYSize()-3; yPos++){
+			//unsigned int count = 0;
+			//unsigned int pieces_count = 0;
+			//for(size_t curr = 0; curr < 4; curr++){
+				//if(getPiece(xPos+curr, yPos+3-curr) == currPlayerPiece){
+					//count++;
+				//}
+				//if(getPiece(xPos+curr, yPos+curr) != empty_char){
+					//pieces_count++;
+				//}
+			//}
+			//if(pieces_count == 3 && count == 3){
+				//threePiecesCount++;
+			//}
+			//if (pieces_count == 2 && count == 2){
+				////cout << "horizontal" << endl;
+				//twoPiecesCount++;
+			//}
+		//}
+	//}
 
-	//cout << "threePiecesCount " << threePiecesCount << endl << "twoPiecesCount " << twoPiecesCount << endl;
-	int result = 	threePiecesCount * params.ThreeInARow
-		+ twoPiecesCount * params.TwoInARow;
-	/*switch (params){*/
-	//case 1:
-	//result = threePiecesCount;
-	//break;
-	//case 2:
-	//result = twoPiecesCount + 5 * threePiecesCount;
-	//break;
+	////cout << "threePiecesCount " << threePiecesCount << endl << "twoPiecesCount " << twoPiecesCount << endl;
+	//int result = 	threePiecesCount * params.ThreeInARow
+		//+ twoPiecesCount * params.TwoInARow;
+	//[>switch (params){<]
+	////case 1:
+	////result = threePiecesCount;
+	////break;
+	////case 2:
+	////result = twoPiecesCount + 5 * threePiecesCount;
+	////break;
 
-	//case 3:
-	//result = twoPiecesCount;
-	//break;
-	//default:
-	//result = 0;
-	/*}*/
-	return result;
-}
+	////case 3:
+	////result = twoPiecesCount;
+	////break;
+	////default:
+	////result = 0;
+	//[>}<]
+	//return result;
+//}
 
 
 //void Game::start(std::function<int(Game)> player1, std::function<int(Game)> player2){
@@ -257,10 +252,10 @@ void Game::drawBoard(){
 	sf::RectangleShape background(sf::Vector2f(window.getSize()));
 	background.setFillColor(sf::Color::Green);
 	window.draw(background);
-	for(size_t y = 0; y < pieces.getYSize(); y++) {
-		for(size_t x = 0; x < pieces.getXSize(); x++) {
+	for(size_t y = 0; y < getYSize(); y++) {
+		for(size_t x = 0; x < getXSize(); x++) {
 			sf::CircleShape circle(circleSize/2);
-			switch (pieces.getPiece(x,y)){
+			switch (getPiece(x,y)){
 				case empty_char:
 					circle.setFillColor(sf::Color::Black);
 					break;
@@ -294,7 +289,7 @@ void Game::handleEvent(sf::Event event){
 					   placePiece(place);
 					   if(hasWon()){
 						   gameState = GameState::ended;
-						   pieces.clear();
+						   clear();
 					   }
 					   else nextPlayer();
 					   }break;
@@ -311,8 +306,6 @@ void Game::handleEvent(sf::Event event){
 void Game::loop(){
 	switch(gameState){
 		case GameState::menu:{
-			 //sf::Text text("Start", font, 100);  
-			 //window.draw(text);
 			 }break;
 		case GameState::inGame:
 			 drawBoard();
@@ -333,10 +326,6 @@ char Game::getPlayerChar(){
 	}
 }	
 
-void Game::placePiece(unsigned int at){
-	pieces.placePiece(at, getPlayerChar());
-}
-
 //unsigned int Game::getPlayerInput() const {
 	//string input;
 	//unsigned int result;
@@ -354,3 +343,82 @@ void Game::placePiece(unsigned int at){
 	//return result - 1;
 
 //}
+
+void Game::nextPlayer(){
+	if(currPlayer == Player::O) currPlayer = Player::X;
+	else currPlayer = Player::O;
+}
+
+//void Game::print(){
+	//print();
+//}
+
+const Game::Pieces getPieces() const {
+	return pieces;
+}
+
+void Pieces::clear(){
+	for(int i = 0; i < getXSize(); i++){
+		for(int j = 0; j < getYSize(); j++){
+			setPiece(i, j, empty_char);
+		}
+	}
+}
+
+char Pieces::getPiece(int x, int y) const {
+	if(!isInputCorrect(x)){
+		cout << x << " " << y << "is out of bounds" << endl;
+		return error_char;
+	}
+	return pieces[x][y];
+}
+void Pieces::print() const {
+	for(size_t y = 0; y < pieces[0].size(); y++) {
+		for(size_t x = 0; x < pieces.size(); x++) {
+			cout << pieces[x][y] << "  ";
+		}
+		cout << endl;
+	}
+	for(int i = 1; i <= getXSize(); i++){
+		cout << i << "  ";
+	}
+	cout << endl;
+}
+
+void Pieces::setPiece(int x, int y, char target){
+	pieces[x][y] = target;
+}
+
+bool Pieces::isFull() const {
+	for(size_t i = 0; i < getXSize(); i++){
+		for(size_t j = 0; j < getYSize(); j++){
+			if(getPiece(i, j) == empty_char){
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool Pieces::isInputCorrect(unsigned int input) const {
+	//std::cout << "input is: " << input << std::endl; 
+	if(input >= 0 && input < getXSize()){
+		//cout << "in bounds" << endl;
+		//cout << "highest piece: " << pieces[input][0] << endl;
+		return pieces[input][0] == empty_char;
+	}
+	else{
+		cout << "out of bounds: " << input << endl;
+		return false;
+	}
+}
+
+void Pieces::placePiece(unsigned int at){
+	for(int i = getYSize()-1; i >= 0; i--) {
+		if(getPiece(at, i) == empty_char) {
+			//cout << "found empty spot at " << at << ", " << i  << endl;
+			setPiece(at, i, getPlayerChar());
+			break;
+		}
+	}
+}
