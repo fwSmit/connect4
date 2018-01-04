@@ -1,13 +1,21 @@
+#include <assert.h>
 #include "Game.h"
 #include <cmath>
 
-Game::Game()
+Game::Game(sf::RenderWindow& _window, tgui::Gui& gui) : window(_window)
 {
-	for(int i = 0; i < pieces.getXSize(); i++){
-		for(int j = 0; j < pieces.getYSize(); j++){
-			pieces.setPiece(i, j, empty_char);
-		}
-	}
+	tgui::Theme::Ptr theme = tgui::Theme::create("/home/friso/tgui-git/src/TGUI/widgets/Black.txt");
+	button1 = theme->load("button");
+	button1->setText("1 player");
+	button1->setSize(sf::Vector2f(100, 100));
+	button1->setPosition(100, 300);
+	gui.add(button1, "button1");
+	button2 = theme->load("button");
+	button2->setText("2 player");
+	button2->setSize(sf::Vector2f(100, 100));
+	button2->setPosition(100, 500);
+	gui.add(button2, "button2");
+
 
 	font.loadFromFile("../fonts/Ubuntu-M.ttf");
 
@@ -221,29 +229,29 @@ int Game::getNumberWinningMoves(BotParameters params) const {
 }
 
 
-void Game::start(std::function<int(Game)> player1, std::function<int(Game)> player2){
-	bool finished = false;
-	while(!finished) {
-		if(getCurrentPlayer() == Player::Beginning){
-			//cout << "Beginning player" << endl;
-			placePiece(player1(*this));
-		}else{
-			//cout << "not Beginning player" << endl;
-			placePiece(player2(*this));
-		}
-		print();
-		if(hasWon()){
-			print();
-			cout << "player" << (getCurrentPlayer() == Player::O? " O " : " X ") << "has won" << endl;
-			finished = true;
-		}
-		//cout << "number of 2 pieces in a row " << getNumberWinningMoves() << endl;
-		//cout << "next player" << endl;
-		nextPlayer();
-	}
-}
+//void Game::start(std::function<int(Game)> player1, std::function<int(Game)> player2){
+	//bool finished = false;
+	//while(!finished) {
+		//if(getCurrentPlayer() == Player::Beginning){
+			////cout << "Beginning player" << endl;
+			//placePiece(player1(*this));
+		//}else{
+			////cout << "not Beginning player" << endl;
+			//placePiece(player2(*this));
+		//}
+		//print();
+		//if(hasWon()){
+			//print();
+			//cout << "player" << (getCurrentPlayer() == Player::O? " O " : " X ") << "has won" << endl;
+			//finished = true;
+		//}
+		////cout << "number of 2 pieces in a row " << getNumberWinningMoves() << endl;
+		////cout << "next player" << endl;
+		//nextPlayer();
+	//}
+//}
 
-void Game::drawBoard(sf::RenderWindow& window){
+void Game::drawBoard(){
 	int circleSize = 130;
 	int spacing = 10;
 	sf::RectangleShape background(sf::Vector2f(window.getSize()));
@@ -271,7 +279,7 @@ void Game::drawBoard(sf::RenderWindow& window){
 	} 
 }
 
-void Game::handleEvent(sf::Event event, sf::RenderWindow& window){
+void Game::handleEvent(sf::Event event){
 	int circleSize = 130;
 	int spacing = 10;
 	if(event.type == sf::Event::MouseButtonPressed){
@@ -286,10 +294,9 @@ void Game::handleEvent(sf::Event event, sf::RenderWindow& window){
 					   placePiece(place);
 					   if(hasWon()){
 						   gameState = GameState::ended;
+						   pieces.clear();
 					   }
-					   else{
-						   nextPlayer();
-					   }
+					   else nextPlayer();
 					   }break;
 				case GameState::ended:
 						gameState = GameState::inGame;
@@ -301,19 +308,49 @@ void Game::handleEvent(sf::Event event, sf::RenderWindow& window){
 	}
 }
 
-void Game::loop(sf::RenderWindow& window){
+void Game::loop(){
 	switch(gameState){
 		case GameState::menu:{
-			 sf::Text text("Start", font, 100);  
-			 window.draw(text);
+			 //sf::Text text("Start", font, 100);  
+			 //window.draw(text);
 			 }break;
 		case GameState::inGame:
-			 drawBoard(window);
+			 drawBoard();
 			 break;
 		case GameState::ended:
-			 //drawBoard(window);
+			 //drawBoard();
 			 break;
 		default:
 			 break;
 	}
+}
+
+char Game::getPlayerChar(){
+	if(currPlayer == Player::X){
+		return playerX_char;
+	}else{
+		return playerO_char;
+	}
 }	
+
+void Game::placePiece(unsigned int at){
+	pieces.placePiece(at, getPlayerChar());
+}
+
+//unsigned int Game::getPlayerInput() const {
+	//string input;
+	//unsigned int result;
+	//cout << "type 1-7 to place a piece at that position" << endl << endl;
+	//while(1) {
+		//std::getline (std::cin, input);
+		//stringstream ss(input);
+		//if(ss >> result && isInputCorrect(result)) {
+			//break;
+		//}
+		//cout << "input not correct" << endl;
+	//}
+	////std::cout << "placing a piece at " << result << std::endl;
+	//cout << endl;
+	//return result - 1;
+
+//}

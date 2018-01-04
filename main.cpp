@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include "Game.h"
 #include "Bot.h"
+#include "TGUI/TGUI.hpp"
 
 
 using namespace std;
@@ -27,11 +28,14 @@ const bool testBot = false;
 int main()
 {
 	srand( time(NULL));
-	Game game;
 	
 
 	sf::RenderWindow window(sf::VideoMode(7*140 + 10, 6*140 + 10), "SFML works!");
 	sf::CircleShape circle(100.f);
+
+	tgui::Gui gui{window};
+
+	Game game(window, gui);
 	
 
     while (window.isOpen())
@@ -42,13 +46,14 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
 
-			game.handleEvent(event, window);
+			game.handleEvent(event);
+			gui.handleEvent(event);
         }
         window.clear();
-		game.loop(window);
-		//game.drawBoard(window);
+		game.loop();
 		//window.draw(circle);
 
+		gui.draw();
         window.display();
     }
 
