@@ -3,6 +3,9 @@
 #include <SFML/Graphics.hpp>
 #include "TGUI/TGUI.hpp"
 
+// temporary
+#include <iostream>
+
 enum Player : bool {O = false, X = true, Beginning = false};
 
 class Game
@@ -11,42 +14,61 @@ class Game
 	sf::Font font;
 	enum class GameState { menu, inGame, ended};
 	GameState gameState = GameState::menu;
-	bool TwoPlayer = false;
+	bool twoPlayer = false;
 	tgui::Button::Ptr button1;
 	tgui::Button::Ptr button2;
 	sf::RenderWindow& window;
+	sf::Vector2f boardToScreen(sf::Vector2i position) const;
+	unsigned int screenToBoardX(sf::Vector2i position) const;
+
 	void drawBoard();
 	
 	// pieces
-	const char empty_char = '-';
-	const char playerO_char = 'O';
-	const char playerX_char = 'X';
-	const char error_char = 'Q';
-	constexpr int getXSize() {return 7;}
-	constexpr int getYSize() {return 6;}
-	array<array <char, getYSize()>, getXSize()> pieces;
+	const static char empty_char = '-';
+	const static char playerO_char = 'O';
+	const static char playerX_char = 'X';
+	const static char error_char = 'Q';
+	const static size_t XSize = 7;
+	const static size_t YSize = 6;
+	const int circleSize = 130; // diameter of the circle
+	const int spacing = 10;
+	const int board_offset_x = 10;
+	const int board_offset_y = 100;
+	std::array<std::array <char, YSize>, XSize> pieces;
+	std::vector<std::pair<sf::Vector2i, sf::Vector2i>> winningPositions;
 	void clear();
 	char getPiece(int x, int y) const;
 	char getPiece(int x) const;
 	void print() const;
 	void setPiece(int x, int y, char target);
-	bool isInputCorrect(unsigned int input) const;
-	bool isFull() const;
+	void onePlayerStart();
+	void twoPlayerStart();
+	void hideButtons();
+	void showButtons();
+	void drawLine(sf::Vector2f begin, sf::Vector2f end);
+
+
+
+	// temporary
+	void printPositions(std::vector<std::pair<sf::Vector2i, sf::Vector2i>> positions) const;
 public:
+	bool isInputCorrect(unsigned int input) const;
+	bool isOutOfBounds(unsigned int input) const;
+	bool isColumnFull(unsigned int input) const;
+	constexpr int getXSize() {return XSize;}
+	constexpr int getYSize() {return YSize;}
+	bool isFull() const;
 	void placePiece(unsigned int at);
-	bool hasWon() const;
+	bool hasWon();
 	Game(sf::RenderWindow& window, tgui::Gui& gui);
 	void loop();
 	void handleEvent(sf::Event event);
 	char getPlayerChar();
 	void nextPlayer();
-	const Pieces getPieces() const;
-	bool isFull(){
-		return pieces.isFull();
-	}
 	bool getCurrentPlayer() const {
 		return currPlayer;
 	}
+	char getCurrentPlayerChar() const;
 	//void start(std::function<int(Game)> player1, std::function<int(Game)> player2);
 	//void print();
 	//unsigned int getPlayerInput() const;

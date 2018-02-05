@@ -26,8 +26,8 @@ char Pieces::getPiece(int x, int y) const {
 	return pieces[x][y];
 }
 void Pieces::print() const {
-	for(size_t y = 0; y < pieces[0].size(); y++) {
-		for(size_t x = 0; x < pieces.size(); x++) {
+	for(size_t y = 0; y < getYSize(); y++) {
+		for(size_t x = 0; x < getXSize(); x++) {
 			cout << pieces[x][y] << "  ";
 		}
 		cout << endl;

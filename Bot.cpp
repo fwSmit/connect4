@@ -10,8 +10,8 @@ int Bot::getBestMove(const Game& _board, BotParameters params){
 	vector<int> bestMoves;
 	Game board = _board;
 	//board.nextPlayer();
-	for(int i = 0; i < board.getPieces().getXSize(); i++){
-		if(board.getPieces().isInputCorrect(i+1)){
+	for(int i = 0; i < board.getXSize(); i++){
+		if(board.isInputCorrect(i+1)){
 			int currScore = getScore(board, board.getCurrentPlayer(), i, 5, params);
 			cout << currScore << " ";
 			// bestScore = max(currScore, bestScore)
@@ -56,13 +56,12 @@ int Bot::getScore(const Game& _board, const bool currentPlayer, int move, int de
 		//cout << "board full" << endl;
 		return 0;
 	}
-	const Pieces boardPieces = board.getPieces();
 	//int bestScore = opponent_turn ? -10 : 10;
 	int bestScore = std::numeric_limits<int>::min();
-	for(int i = 0; i < boardPieces.getXSize(); i++){
+	for(int i = 0; i < board.getXSize(); i++){
 		Game newBoard = board;
 		newBoard.nextPlayer();
-		if(board.getPieces().isInputCorrect(i+1)){
+		if(board.isInputCorrect(i+1)){
 			int score = getScore(newBoard, currentPlayer, i, depth-1, params);
 			//if(opponent_turn){
 				//bestScore = std::max(score, bestScore);
@@ -74,10 +73,6 @@ int Bot::getScore(const Game& _board, const bool currentPlayer, int move, int de
 	}
 	return -bestScore;
 
-}
-
-void test(){
-	
 }
 
 int Bot::getNumberWinningMoves(Game board, BotParameters params){

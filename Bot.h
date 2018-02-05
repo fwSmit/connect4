@@ -9,6 +9,5 @@ public:
 	// 0 = draw
 	// -1 = loss
 	int getScore(const Game& board, const bool currentPlayer, int move, int depth, BotParameters params);
-	void test();
 	int getNumberWinningMoves(Game board, BotParameters params);
 };

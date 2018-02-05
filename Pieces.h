@@ -9,7 +9,7 @@ const char playerO_char = 'O';
 const char playerX_char = 'X';
 const char error_char = 'Q';
 class Pieces{
-		array<array <char, 6>, 7> pieces;
+		std::array<std::array <char, 6>, 7> pieces;
 	public:
 		Pieces();
 		void clear();

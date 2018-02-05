@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <assert.h>
 #include "Game.h"
 #include <cmath>
@@ -12,21 +14,37 @@ Game::Game(sf::RenderWindow& _window, tgui::Gui& gui) : window(_window)
 	button1->setText("1 player");
 	button1->setSize(sf::Vector2f(100, 100));
 	button1->setPosition(100, 300);
+	button1->connect("pressed", &Game::onePlayerStart, this);
 	gui.add(button1, "button1");
 	button2 = theme->load("button");
 	button2->setText("2 player");
 	button2->setSize(sf::Vector2f(100, 100));
 	button2->setPosition(100, 500);
+	button2->connect("pressed", &Game::twoPlayerStart, this);
 	gui.add(button2, "button2");
 
 	font.loadFromFile("../fonts/Ubuntu-M.ttf");
 
 	clear();
+	placePiece(1);
+	placePiece(2);
+	placePiece(2);
+	placePiece(3);
+	placePiece(3);
+	placePiece(3);
+	nextPlayer();
+	placePiece(4);
+	placePiece(4);
+	placePiece(4);
+	nextPlayer();
+
 }
 
-bool Game::hasWon() const
+bool Game::hasWon() 
 {
-	char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
+	bool won = false;
+	char currPlayerPiece = getCurrentPlayerChar();
+	winningPositions.clear();
 	// horizontal win
 	for(size_t yPos = 0; yPos < getYSize(); yPos ++) {
 		for(size_t beginPos = 0; beginPos < getXSize() - 3; beginPos++) {
@@ -39,8 +57,10 @@ bool Game::hasWon() const
 			}
 			//cout << "got " << count << endl;
 			if (count == 4){
-				//cout << "horizontal" << endl;
-				return true;
+				cout << "horizontal" << endl;
+				winningPositions.push_back(std::make_pair(sf::Vector2i(beginPos, yPos), sf::Vector2i(beginPos + 3, yPos)));
+				won = true;
+				//return true;
 			}
 		}
 	}
@@ -56,8 +76,10 @@ bool Game::hasWon() const
 				}
 			}
 			if(count == 4){
-				//cout << "vertical" << endl;
-				return true;
+				cout << "vertical" << endl;
+				winningPositions.push_back(std::make_pair(sf::Vector2i(xPos, yBegin), sf::Vector2i(xPos, yBegin + 3)));
+				won = true;
+				//return true;
 			}
 		}
 	}
@@ -73,9 +95,11 @@ bool Game::hasWon() const
 				}
 			}
 			if(count == 4){
-				//cout << "backslash" << endl;
+				cout << "backslash" << endl;
 				//cout << xPos << "	" << yPos << endl;
-				return true;
+				winningPositions.push_back(std::make_pair(sf::Vector2i(xPos, yPos), sf::Vector2i(xPos + 3, yPos + 3)));
+				won = true;
+				//return true;
 			}
 		}
 		//cout << "reset count " << endl;
@@ -92,12 +116,14 @@ bool Game::hasWon() const
 				}
 			}
 			if(count == 4){
-				//cout << "/" << endl;
-				return true;
+				cout << "/" << endl;
+				winningPositions.push_back(std::make_pair(sf::Vector2i(xPos, yPos+3), sf::Vector2i(xPos + 3, yPos)));
+				won = true;
+				//return true;
 			}
 		}
 	}
-	return false;
+	return won;
 }
 
 //int Game::getNumberWinningMoves(BotParameters params) const {
@@ -247,14 +273,13 @@ bool Game::hasWon() const
 //}
 
 void Game::drawBoard(){
-	int circleSize = 130;
-	int spacing = 10;
 	sf::RectangleShape background(sf::Vector2f(window.getSize()));
 	background.setFillColor(sf::Color::Green);
 	window.draw(background);
 	for(size_t y = 0; y < getYSize(); y++) {
 		for(size_t x = 0; x < getXSize(); x++) {
 			sf::CircleShape circle(circleSize/2);
+			circle.setOrigin(circle.getRadius(), circle.getRadius());
 			switch (getPiece(x,y)){
 				case empty_char:
 					circle.setFillColor(sf::Color::Black);
@@ -266,9 +291,10 @@ void Game::drawBoard(){
 					circle.setFillColor(sf::Color::Blue);
 					break;
 				default:
+					circle.setFillColor(sf::Color::Red);
 					break;
 			}
-			circle.setPosition(x*(circleSize+spacing)+spacing, y*(spacing+ circleSize)+spacing);
+			circle.setPosition(boardToScreen(sf::Vector2i(x, y)));
 			window.draw(circle); 
 		} 
 	} 
@@ -281,19 +307,20 @@ void Game::handleEvent(sf::Event event){
 		if(event.mouseButton.button == sf::Mouse::Left){	
 			switch(gameState){
 				case GameState::menu:{
-					gameState = GameState::inGame;
 					}break;
 				case GameState::inGame:{
-					   double place = std::floor(double(sf::Mouse::getPosition(window).x - spacing) / double(circleSize + spacing));
-					   std::cout << sf::Mouse::getPosition(window).x << "	" << place << endl;
-					   placePiece(place);
-					   if(hasWon()){
-						   gameState = GameState::ended;
-						   clear();
-					   }
-					   else nextPlayer();
-					   }break;
+					    unsigned int place = screenToBoardX(sf::Mouse::getPosition(window));
+						if(!isColumnFull(place)){
+							placePiece(place);
+							if(hasWon()){
+								gameState = GameState::ended;
+							}
+							else nextPlayer();
+						}
+						}break;
 				case GameState::ended:
+						cout << "mouse pressed in end game" << endl;
+						clear();
 						gameState = GameState::inGame;
 						break;
 				default:
@@ -311,7 +338,10 @@ void Game::loop(){
 			 drawBoard();
 			 break;
 		case GameState::ended:
-			 //drawBoard();
+			 drawBoard();
+			 for(int i = 0; i < winningPositions.size(); i++){
+				 drawLine(boardToScreen(winningPositions[i].first), boardToScreen(winningPositions[i].second));
+			 }
 			 break;
 		default:
 			 break;
@@ -353,11 +383,8 @@ void Game::nextPlayer(){
 	//print();
 //}
 
-const Game::Pieces getPieces() const {
-	return pieces;
-}
 
-void Pieces::clear(){
+void Game::clear(){
 	for(int i = 0; i < getXSize(); i++){
 		for(int j = 0; j < getYSize(); j++){
 			setPiece(i, j, empty_char);
@@ -365,17 +392,17 @@ void Pieces::clear(){
 	}
 }
 
-char Pieces::getPiece(int x, int y) const {
-	if(!isInputCorrect(x)){
+char Game::getPiece(int x, int y) const {
+	if(isOutOfBounds(x)){
 		cout << x << " " << y << "is out of bounds" << endl;
 		return error_char;
 	}
 	return pieces[x][y];
 }
-void Pieces::print() const {
-	for(size_t y = 0; y < pieces[0].size(); y++) {
-		for(size_t x = 0; x < pieces.size(); x++) {
-			cout << pieces[x][y] << "  ";
+void Game::print() const {
+	for(size_t y = 0; y < getYSize(); y++) {
+		for(size_t x = 0; x < getXSize(); x++) {
+			cout << getPiece(x, y) << "  ";
 		}
 		cout << endl;
 	}
@@ -385,11 +412,11 @@ void Pieces::print() const {
 	cout << endl;
 }
 
-void Pieces::setPiece(int x, int y, char target){
+void Game::setPiece(int x, int y, char target){
 	pieces[x][y] = target;
 }
 
-bool Pieces::isFull() const {
+bool Game::isFull() const {
 	for(size_t i = 0; i < getXSize(); i++){
 		for(size_t j = 0; j < getYSize(); j++){
 			if(getPiece(i, j) == empty_char){
@@ -400,7 +427,7 @@ bool Pieces::isFull() const {
 	return true;
 }
 
-bool Pieces::isInputCorrect(unsigned int input) const {
+bool Game::isInputCorrect(unsigned int input) const {
 	//std::cout << "input is: " << input << std::endl; 
 	if(input >= 0 && input < getXSize()){
 		//cout << "in bounds" << endl;
@@ -413,7 +440,18 @@ bool Pieces::isInputCorrect(unsigned int input) const {
 	}
 }
 
-void Pieces::placePiece(unsigned int at){
+bool Game::isOutOfBounds(unsigned int input) const{
+	if(input < 0 || input >= getXSize()){
+		return true;
+	}
+	return false;
+}
+
+bool Game::isColumnFull(unsigned int input) const{
+	return getPiece(input, 0) != empty_char;
+}
+
+void Game::placePiece(unsigned int at){
 	for(int i = getYSize()-1; i >= 0; i--) {
 		if(getPiece(at, i) == empty_char) {
 			//cout << "found empty spot at " << at << ", " << i  << endl;
@@ -421,4 +459,70 @@ void Pieces::placePiece(unsigned int at){
 			break;
 		}
 	}
+}
+
+void Game::onePlayerStart(){
+	gameState = GameState::inGame;
+	twoPlayer = false;
+	hideButtons();
+}
+
+
+void Game::twoPlayerStart(){
+	gameState = GameState::inGame;
+	twoPlayer = true;
+	hideButtons();
+}
+
+void Game::hideButtons(){
+	button1->hide();
+	button2->hide();
+}
+
+void Game::showButtons(){
+	button1->show();
+	button2->show();
+}
+
+char Game::getCurrentPlayerChar() const{
+	return getCurrentPlayer() == Player::O ? playerO_char : playerX_char;
+}
+
+void Game::printPositions(std::vector<std::pair<sf::Vector2i, sf::Vector2i>> positions) const{
+	for(int i = 0; i < positions.size(); i++){
+		cout << "from: " << positions[i].first.x << ",  " << positions[i].first.y << endl;
+		cout << "to: " << positions[i].second.x << ",  " << positions[i].second.y << endl;
+	}
+}
+
+void Game::drawLine(sf::Vector2f begin, sf::Vector2f end){
+	int thickness = 20;
+	sf::Vector2f delta = end - begin;
+	//delta.x = std::abs(begin.x - end.x);
+	//delta.y = std::abs(begin.y - end.y);
+	int size = std::sqrt(std::pow(delta.x, 2) + std::pow(delta.y, 2));
+	float angle = std::atan2(delta.y, delta.x);
+	angle = angle / (2*M_PI) * 360;
+	sf::RectangleShape rect(sf::Vector2f(size, thickness));
+	rect.setOrigin(0, thickness/2);
+	rect.setRotation(angle);
+	rect.setPosition(begin);
+	std::cout << "delta " << delta.x << " " << delta.y << std::endl;
+	std::cout << "angle " << angle << std::endl;
+	window.draw(rect);
+	
+	//sf::VertexArray line(sf::PrimitiveType::Lines, 2);
+	//line[0].position = begin;
+	//line[0].color = sf::Color::Red;
+	//line[1].position = end;
+	//line[1].color = sf::Color::Red;
+	//window.draw(line);
+}
+
+sf::Vector2f Game::boardToScreen(sf::Vector2i position) const {
+	return sf::Vector2f(position.x * (circleSize + spacing) + board_offset_x + circleSize / 2, position.y * (spacing + circleSize) + board_offset_y + circleSize / 2);
+}
+
+unsigned int Game::screenToBoardX(sf::Vector2i position) const{
+	return std::floor(double(position.x - board_offset_x) / double(circleSize + spacing));
 }
