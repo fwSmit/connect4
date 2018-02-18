@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <assert.h>
+#include "Bot.h"
 #include "Game.h"
 #include <cmath>
 #include <iostream>
@@ -57,7 +58,7 @@ bool Game::hasWon()
 			}
 			//cout << "got " << count << endl;
 			if (count == 4){
-				cout << "horizontal" << endl;
+				//cout << "horizontal" << endl;
 				winningPositions.push_back(std::make_pair(sf::Vector2i(beginPos, yPos), sf::Vector2i(beginPos + 3, yPos)));
 				won = true;
 				//return true;
@@ -76,7 +77,7 @@ bool Game::hasWon()
 				}
 			}
 			if(count == 4){
-				cout << "vertical" << endl;
+				//cout << "vertical" << endl;
 				winningPositions.push_back(std::make_pair(sf::Vector2i(xPos, yBegin), sf::Vector2i(xPos, yBegin + 3)));
 				won = true;
 				//return true;
@@ -95,7 +96,7 @@ bool Game::hasWon()
 				}
 			}
 			if(count == 4){
-				cout << "backslash" << endl;
+				//cout << "backslash" << endl;
 				//cout << xPos << "	" << yPos << endl;
 				winningPositions.push_back(std::make_pair(sf::Vector2i(xPos, yPos), sf::Vector2i(xPos + 3, yPos + 3)));
 				won = true;
@@ -116,7 +117,7 @@ bool Game::hasWon()
 				}
 			}
 			if(count == 4){
-				cout << "/" << endl;
+				//cout << "/" << endl;
 				winningPositions.push_back(std::make_pair(sf::Vector2i(xPos, yPos+3), sf::Vector2i(xPos + 3, yPos)));
 				won = true;
 				//return true;
@@ -126,128 +127,127 @@ bool Game::hasWon()
 	return won;
 }
 
-//int Game::getNumberWinningMoves(BotParameters params) const {
-	//unsigned int twoPiecesCount = 0;
-	//unsigned int threePiecesCount = 0;
+int Game::getNumberWinningMoves(BotParameters params) const {
+	unsigned int twoPiecesCount = 0;
+	unsigned int threePiecesCount = 0;
 
-	//char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
-	//// horizontal win
-	//for(size_t yPos = 0; yPos < getYSize(); yPos ++) {
-		//for(size_t beginPos = 0; beginPos < getXSize() - 3; beginPos++) {
-			//unsigned int count = 0;
-			//unsigned int pieces_count = 0;
-			//for(size_t currPos = beginPos; currPos < beginPos +  4; currPos++) {
-				//if(getPiece(currPos, yPos) != empty_char){
-					//pieces_count++;
-				//}
-				//if(getPiece(currPos, yPos) == currPlayerPiece) {
-					//count++;
-					////cout << "found horizontal piece at " << currPos << "	" << yPos << endl;
-				//}
-			//}
-			////cout << "got " << count << endl;
-			//if(pieces_count == 3 && count == 3){
-				//threePiecesCount++;
-			//}
-			//if (pieces_count == 2 && count == 2){
-				////cout << "horizontal" << endl;
-				//twoPiecesCount++;
-			//}
-		//}
-	//}
+	char currPlayerPiece = currPlayer == Player::O? playerO_char : playerX_char;
+	// horizontal win
+	for(size_t yPos = 0; yPos < getYSize(); yPos ++) {
+		for(size_t beginPos = 0; beginPos < getXSize() - 3; beginPos++) {
+			unsigned int count = 0;
+			unsigned int pieces_count = 0;
+			for(size_t currPos = beginPos; currPos < beginPos +  4; currPos++) {
+				if(getPiece(currPos, yPos) != empty_char){
+					pieces_count++;
+				}
+				if(getPiece(currPos, yPos) == currPlayerPiece) {
+					count++;
+					//cout << "found horizontal piece at " << currPos << "	" << yPos << endl;
+				}
+			}
+			//cout << "got " << count << endl;
+			if(pieces_count == 3 && count == 3){
+				threePiecesCount++;
+			}
+			if (pieces_count == 2 && count == 2){
+				//cout << "horizontal" << endl;
+				twoPiecesCount++;
+			}
+		}
+	}
 
-	////vertical win
-	//for(size_t xPos = 0; xPos < getXSize(); xPos++){
-		//for(size_t yBegin = 0; yBegin < getYSize()-3; yBegin++){
-			//unsigned int count = 0;
-			//unsigned int pieces_count = 0;
-			//for(size_t curr = 0; curr < 4; curr++){
-				//if(getPiece(xPos, yBegin+curr) == currPlayerPiece){
-					//count++;
-					////cout << "found vertical piece at " << xPos << "	" << yBegin+curr << endl;
-				//}
-				//if(getPiece(xPos, yBegin+curr) != empty_char){
-					//pieces_count++;
-				//}
-			//}
-			//if(pieces_count == 3 && count == 3){
-				//threePiecesCount++;
-			//}
-			//if (pieces_count == 2 && count == 2){
-				////cout << "horizontal" << endl;
-				//twoPiecesCount++;
-			//}
-		//}
-	//}
+	//vertical win
+	for(size_t xPos = 0; xPos < getXSize(); xPos++){
+		for(size_t yBegin = 0; yBegin < getYSize()-3; yBegin++){
+			unsigned int count = 0;
+			unsigned int pieces_count = 0;
+			for(size_t curr = 0; curr < 4; curr++){
+				if(getPiece(xPos, yBegin+curr) == currPlayerPiece){
+					count++;
+					//cout << "found vertical piece at " << xPos << "	" << yBegin+curr << endl;
+				}
+				if(getPiece(xPos, yBegin+curr) != empty_char){
+					pieces_count++;
+				}
+			}
+			if(pieces_count == 3 && count == 3){
+				threePiecesCount++;
+			}
+			if (pieces_count == 2 && count == 2){
+				//cout << "horizontal" << endl;
+				twoPiecesCount++;
+			}
+		}
+	}
 
-	//// across like \ (backslash) 
-	//for(size_t xPos = 0; xPos < getXSize()-3; xPos++){
-		//for(size_t yPos = 0; yPos < getYSize()-3; yPos++){
-			//unsigned int count = 0;
-			//unsigned int pieces_count = 0;
-			//for(size_t curr = 0; curr < 4; curr++){
-				//if(getPiece(xPos+curr, yPos+curr) == currPlayerPiece){
-					//count++;
-					////cout << "found piece at " << xPos+3-curr << "	" << yPos+curr << endl;
-				//}
-				//if(getPiece(xPos+curr, yPos+curr) != empty_char){
-					//pieces_count++;
-				//}
-			//}
-			//if(pieces_count == 3 && count == 3){
-				//threePiecesCount++;
-			//}
-			//if (pieces_count == 2 && count == 2){
-				////cout << "horizontal" << endl;
-				//twoPiecesCount++;
-			//}
-		//}
-		////cout << "reset count " << endl;
-	//}
+	// across like \ (backslash) 
+	for(size_t xPos = 0; xPos < getXSize()-3; xPos++){
+		for(size_t yPos = 0; yPos < getYSize()-3; yPos++){
+			unsigned int count = 0;
+			unsigned int pieces_count = 0;
+			for(size_t curr = 0; curr < 4; curr++){
+				if(getPiece(xPos+curr, yPos+curr) == currPlayerPiece){
+					count++;
+					//cout << "found piece at " << xPos+3-curr << "	" << yPos+curr << endl;
+				}
+				if(getPiece(xPos+curr, yPos+curr) != empty_char){
+					pieces_count++;
+				}
+			}
+			if(pieces_count == 3 && count == 3){
+				threePiecesCount++;
+			}
+			if (pieces_count == 2 && count == 2){
+				//cout << "horizontal" << endl;
+				twoPiecesCount++;
+			}
+		}
+		//cout << "reset count " << endl;
+	}
 
 
-	//// across like / (forward slash) 
-	//for(size_t xPos = 0; xPos < getXSize()-3; xPos++){
-		//for(size_t yPos = 0; yPos < getYSize()-3; yPos++){
-			//unsigned int count = 0;
-			//unsigned int pieces_count = 0;
-			//for(size_t curr = 0; curr < 4; curr++){
-				//if(getPiece(xPos+curr, yPos+3-curr) == currPlayerPiece){
-					//count++;
-				//}
-				//if(getPiece(xPos+curr, yPos+curr) != empty_char){
-					//pieces_count++;
-				//}
-			//}
-			//if(pieces_count == 3 && count == 3){
-				//threePiecesCount++;
-			//}
-			//if (pieces_count == 2 && count == 2){
-				////cout << "horizontal" << endl;
-				//twoPiecesCount++;
-			//}
-		//}
-	//}
+	// across like / (forward slash) 
+	for(size_t xPos = 0; xPos < getXSize()-3; xPos++){
+		for(size_t yPos = 0; yPos < getYSize()-3; yPos++){
+			unsigned int count = 0;
+			unsigned int pieces_count = 0;
+			for(size_t curr = 0; curr < 4; curr++){
+				if(getPiece(xPos+curr, yPos+3-curr) == currPlayerPiece){
+					count++;
+				}
+				if(getPiece(xPos+curr, yPos+curr) != empty_char){
+					pieces_count++;
+				}
+			}
+			if(pieces_count == 3 && count == 3){
+				threePiecesCount++;
+			}
+			if (pieces_count == 2 && count == 2){
+				//cout << "horizontal" << endl;
+				twoPiecesCount++;
+			}
+		}
+	}
 
-	////cout << "threePiecesCount " << threePiecesCount << endl << "twoPiecesCount " << twoPiecesCount << endl;
-	//int result = 	threePiecesCount * params.ThreeInARow
-		//+ twoPiecesCount * params.TwoInARow;
+	//cout << "threePiecesCount " << threePiecesCount << endl << "twoPiecesCount " << twoPiecesCount << endl;
+	int result = 	threePiecesCount * params.ThreeInARow
+		+ twoPiecesCount * params.TwoInARow;
 	//[>switch (params){<]
-	////case 1:
-	////result = threePiecesCount;
-	////break;
-	////case 2:
-	////result = twoPiecesCount + 5 * threePiecesCount;
-	////break;
+	//case 1:
+	//result = threePiecesCount;
+	//break;
+	//case 2:
+	//result = twoPiecesCount + 5 * threePiecesCount;
+	//break;
 
-	////case 3:
-	////result = twoPiecesCount;
-	////break;
-	////default:
-	////result = 0;
-	//[>}<]
-	//return result;
-//}
+	//case 3:
+	//result = twoPiecesCount;
+	//break;
+	//default:
+	//result = 0;
+	return result;
+}
 
 
 //void Game::start(std::function<int(Game)> player1, std::function<int(Game)> player2){
@@ -309,17 +309,23 @@ void Game::handleEvent(sf::Event event){
 				case GameState::menu:{
 					}break;
 				case GameState::inGame:{
-					    unsigned int place = screenToBoardX(sf::Mouse::getPosition(window));
-						if(!isColumnFull(place)){
-							placePiece(place);
-							if(hasWon()){
-								gameState = GameState::ended;
+						if(twoPlayer == false && getCurrentPlayer() == AI){
+
+							//cout << move << endl;
+							//cout << "AI turn" << endl;
+
+						}
+						else{
+							//cout << "player turn" << endl;
+							unsigned int place = screenToBoardX(sf::Mouse::getPosition(window));
+							if(!isColumnFull(place)){
+								placePiece(place);
+								endMove();
 							}
-							else nextPlayer();
 						}
 						}break;
 				case GameState::ended:
-						cout << "mouse pressed in end game" << endl;
+						//cout << "mouse pressed in end game" << endl;
 						clear();
 						gameState = GameState::inGame;
 						break;
@@ -336,6 +342,12 @@ void Game::loop(){
 			 }break;
 		case GameState::inGame:
 			 drawBoard();
+			 if(timeout == false && twoPlayer == false && getCurrentPlayer() == AI){
+				 Bot bot; 
+				 unsigned int move = bot.getBestMove(*this, BotParameters(0,0));
+				 placePiece(move);
+				 endMove();
+			 }
 			 break;
 		case GameState::ended:
 			 drawBoard();
@@ -346,6 +358,7 @@ void Game::loop(){
 		default:
 			 break;
 	}
+	timeout = false;
 }
 
 char Game::getPlayerChar(){
@@ -507,8 +520,8 @@ void Game::drawLine(sf::Vector2f begin, sf::Vector2f end){
 	rect.setOrigin(0, thickness/2);
 	rect.setRotation(angle);
 	rect.setPosition(begin);
-	std::cout << "delta " << delta.x << " " << delta.y << std::endl;
-	std::cout << "angle " << angle << std::endl;
+	//std::cout << "delta " << delta.x << " " << delta.y << std::endl;
+	//std::cout << "angle " << angle << std::endl;
 	window.draw(rect);
 	
 	//sf::VertexArray line(sf::PrimitiveType::Lines, 2);
@@ -525,4 +538,14 @@ sf::Vector2f Game::boardToScreen(sf::Vector2i position) const {
 
 unsigned int Game::screenToBoardX(sf::Vector2i position) const{
 	return std::floor(double(position.x - board_offset_x) / double(circleSize + spacing));
+}
+
+void Game::endMove(){
+	if(hasWon()){
+		gameState = GameState::ended;
+	}
+	else {
+		nextPlayer();
+		timeout = true;
+	}
 }

@@ -2,19 +2,24 @@
 #include <array>
 #include <SFML/Graphics.hpp>
 #include "TGUI/TGUI.hpp"
+#include "BotParameters.h"
 
 // temporary
 #include <iostream>
 
 enum Player : bool {O = false, X = true, Beginning = false};
 
+
 class Game
 {
 	Player currPlayer = Player::Beginning;
+	Player AI = Player::O;
 	sf::Font font;
 	enum class GameState { menu, inGame, ended};
 	GameState gameState = GameState::menu;
 	bool twoPlayer = false;
+	bool timeout = false; // used by the bot so it's not too fast
+
 	tgui::Button::Ptr button1;
 	tgui::Button::Ptr button2;
 	sf::RenderWindow& window;
@@ -33,7 +38,7 @@ class Game
 	const int circleSize = 130; // diameter of the circle
 	const int spacing = 10;
 	const int board_offset_x = 10;
-	const int board_offset_y = 100;
+	const int board_offset_y = 10;
 	std::array<std::array <char, YSize>, XSize> pieces;
 	std::vector<std::pair<sf::Vector2i, sf::Vector2i>> winningPositions;
 	void clear();
@@ -68,10 +73,11 @@ public:
 	bool getCurrentPlayer() const {
 		return currPlayer;
 	}
+	void endMove(); // checks if someone has won and otherwise calls nextPlayer
 	char getCurrentPlayerChar() const;
 	//void start(std::function<int(Game)> player1, std::function<int(Game)> player2);
 	//void print();
 	//unsigned int getPlayerInput() const;
-	//int getNumberWinningMoves(BotParameters params) const;
+	int getNumberWinningMoves(BotParameters params) const;
 };
 

@@ -3,6 +3,9 @@
 
 class Bot{
 public:
+	Bot bot(){
+		std::srand(std::time(nullptr)); //set the seed to the current time
+	}
 	int getBestMove(const Game& board, BotParameters params);
 
 	// score of 1 = win
