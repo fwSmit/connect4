@@ -27,17 +27,17 @@ Game::Game(sf::RenderWindow& _window, tgui::Gui& gui) : window(_window)
 	font.loadFromFile("../fonts/Ubuntu-M.ttf");
 
 	clear();
-	placePiece(1);
-	placePiece(2);
-	placePiece(2);
-	placePiece(3);
-	placePiece(3);
-	placePiece(3);
-	nextPlayer();
-	placePiece(4);
-	placePiece(4);
-	placePiece(4);
-	nextPlayer();
+	//placePiece(1);
+	//placePiece(2);
+	//placePiece(2);
+	//placePiece(3);
+	//placePiece(3);
+	//placePiece(3);
+	//nextPlayer();
+	//placePiece(4);
+	//placePiece(4);
+	//placePiece(4);
+	//nextPlayer();
 
 }
 
